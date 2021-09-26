@@ -8,14 +8,10 @@ namespace Domain.Models
 {
     public sealed class Order
     {
-        public Guid Id { get; set; }
-
-        public string Name { get; set; }
-
-        public TimeSpan PreparationTime { get; set; }
-
-        public int Complexity { get; set; }
-
-        public CookingApparatuses Cooking_Apparatus { get; set; }
+        public Order(IEnumerable<Food> foods)
+        {
+            Foods = foods;
+        }
+        public IEnumerable<Food> Foods { get; set; }
     }
 }
