@@ -26,6 +26,13 @@
       },
       "dotnetRunMessages": "true",
       "applicationUrl": "https://localhost:3001;http://localhost:3000"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/api/Serve/GetTables",
+      "publishAllPorts": true,
+      "useSSL": true
     }
   }
 }
