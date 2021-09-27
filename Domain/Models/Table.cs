@@ -32,6 +32,7 @@ namespace Domain.Models
                 var complexity = new Random().Next(1, 10);
                 var cookingApparatus = (CookingApparatuses)Enum.Parse(typeof(CookingApparatuses), new Random().Next(0, 2).ToString());
                 foods.Add(new Food(name, prepTime, complexity, cookingApparatus));
+                nrOfFoods--;
             }
 
             return new Order(foods);

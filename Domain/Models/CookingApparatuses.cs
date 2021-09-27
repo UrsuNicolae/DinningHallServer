@@ -9,7 +9,6 @@ namespace Domain.Models
     public enum CookingApparatuses
     {
         Stove,
-        Oven,
-        None
+        Oven
     }
 }
