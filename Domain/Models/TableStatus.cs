@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Models
 {
-    public enum CookingApparatuses
+    public enum TableStatus
     {
-        Stove,
-        Oven
+        WaitToOrder, WaitToBeServed
     }
 }

@@ -32,6 +32,8 @@ namespace Dinning_Hall
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dinning_Hall", Version = "v1" });
             });
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +45,11 @@ namespace Dinning_Hall
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dinning_Hall v1"));
             }
+
+            app.UseCors(options => options.WithOrigins(new []{ "https://localhost:5001", "http://localhost:5000" })
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+            );
 
             app.UseHttpsRedirection();
 
