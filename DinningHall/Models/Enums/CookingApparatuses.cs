@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Models
+namespace DinningHall.Models.Enums
 {
-    public sealed class Menu
+    public enum CookingApparatuses
     {
+        Stove,
+        Oven,
+        None
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using DinningHall.Models.Enums;
 
-namespace Domain.Models
+namespace DinningHall.Models
 {
     public sealed class Table
     {
@@ -15,9 +15,9 @@ namespace Domain.Models
             TableStatus = TableStatus.WaitToOrder;
         }
 
-        public Guid Id { get;}
+        public Guid Id { get; }
 
-        public bool IsFree  { get; set; }
+        public bool IsFree { get; set; }
 
         public TableStatus TableStatus { get; set; }
 

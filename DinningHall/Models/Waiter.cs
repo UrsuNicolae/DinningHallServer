@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using DinningHall.Models.Enums;
 
-namespace Domain.Models
+namespace DinningHall.Models
 {
     public sealed class Waiter
     {

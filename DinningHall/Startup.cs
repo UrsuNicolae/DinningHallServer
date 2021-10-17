@@ -11,6 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DinningHall.Data;
+using DinningHall.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace Dinning_Hall
 {
@@ -26,7 +29,9 @@ namespace Dinning_Hall
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddDbContext<AppDbContext>(opt =>
+                opt.UseInMemoryDatabase("DinningHallDb"));
+            services.AddHttpClient<IHttpDataClient, HttpDataClient>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

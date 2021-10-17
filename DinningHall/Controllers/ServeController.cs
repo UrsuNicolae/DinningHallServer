@@ -8,7 +8,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using Domain.Models;
+using Dinning_Hall.Domain;
 using Microsoft.AspNetCore.Html;
 using Newtonsoft.Json;
 

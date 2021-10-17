@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Models
+namespace DinningHall.Models
 {
-    public enum CookingApparatuses
+    public static class Menu
     {
-        Stove,
-        Oven
+        public static IEnumerable<Food> Foods;
     }
 }

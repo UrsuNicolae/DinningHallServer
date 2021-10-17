@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Models
+namespace DinningHall.Http
 {
-    public enum TableStatus
+    public class HttpDataClient : IHttpDataClient
     {
-        WaitToOrder, WaitToBeServed
     }
 }
