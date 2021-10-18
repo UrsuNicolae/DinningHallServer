@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DinningHall.Data;
+using DinningHall.Data.Interfaces;
 using DinningHall.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,8 +32,14 @@ namespace Dinning_Hall
         {
             services.AddDbContext<AppDbContext>(opt =>
                 opt.UseInMemoryDatabase("DinningHallDb"));
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IWaiterRepository, WaiterRepository>();
+            services.AddScoped<ITableRepository, TableRepository>();
+
             services.AddHttpClient<IHttpDataClient, HttpDataClient>();
+            
             services.AddControllers();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dinning_Hall", Version = "v1" });
@@ -66,6 +73,8 @@ namespace Dinning_Hall
             {
                 endpoints.MapControllers();
             });
+
+            PrepDb.PrepPopulation(app);
         }
     }
 }

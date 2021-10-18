@@ -14,6 +14,12 @@ namespace DinningHall.Data
             
         }
         
-        private DbSet<Order> Orders { get; set; }
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<Table> Tables { get; set; }
+
+        public DbSet<Waiter> Waiters { get; set; }
+
+        public DbSet<Food> Foods { get; set; }
     }
 }

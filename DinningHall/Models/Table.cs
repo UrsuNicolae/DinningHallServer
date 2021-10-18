@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using DinningHall.Models.Enums;
@@ -8,20 +9,18 @@ namespace DinningHall.Models
 {
     public sealed class Table
     {
-        public Table()
-        {
-            Id = new Guid();
-            IsFree = true;
-            TableStatus = TableStatus.WaitToOrder;
-        }
+        [Required]
+        public Guid Id { get; set; }
 
-        public Guid Id { get; }
-
+        [Required]
         public bool IsFree { get; set; }
 
+        [Required]
         public TableStatus TableStatus { get; set; }
+        
+        public Order? Order { get; set; }
 
-        public Order GenerateOrder()
+        /*public Order GenerateOrder()
         {
             var nrOfFoods = new Random().Next(1, 10);
             var foods = new List<Food>();
@@ -36,6 +35,6 @@ namespace DinningHall.Models
             }
 
             return new Order(foods);
-        }
+        }*/
     }
 }

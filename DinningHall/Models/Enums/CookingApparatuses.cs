@@ -7,8 +7,8 @@ namespace DinningHall.Models.Enums
 {
     public enum CookingApparatuses
     {
-        Stove,
-        Oven,
-        None
+        Stove = 1,
+        Oven = 2,
+        None = 3
     }
 }

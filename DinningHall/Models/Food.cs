@@ -10,7 +10,7 @@ namespace DinningHall.Models
     public class Food
     {
         [Required]
-        public Guid Id { get; }
+        public int Id { get; set; }
 
         [Required]
         public string Name { get; set; }

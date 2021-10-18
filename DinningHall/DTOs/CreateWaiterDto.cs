@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DinningHall.Models.Enums
+namespace DinningHall.DTOs
 {
-    public enum TableStatus
+    public class CreateWaiterDto
     {
-        WaitToOrder = 1, WaitToBeServed = 2
+        public bool IsFree { get; set; } = true;
     }
 }

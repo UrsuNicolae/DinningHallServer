@@ -4,13 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using Dinning_Hall.Domain;
-using Microsoft.AspNetCore.Html;
-using Newtonsoft.Json;
+using DinningHall.Models;
 
 namespace Dinning_Hall.Controllers
 {
@@ -56,7 +52,7 @@ namespace Dinning_Hall.Controllers
                 if (waiters.Any(w => w.IsFree))
                 {
                     var waiter = waiters.FirstOrDefault(w => w.IsFree);
-                    var tb = waiter?.FindTableToServe(tables);
+                    //var tb = waiter?.FindTableToServe(tables);
                     var request = new HttpRequestMessage()
                     {
                         RequestUri = new Uri("https://localhost:5001/api/Serve/Order"),

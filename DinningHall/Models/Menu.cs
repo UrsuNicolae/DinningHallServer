@@ -1,12 +1,17 @@
-﻿using System;
+﻿using DinningHall.Data;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DinningHall.Models
 {
-    public static class Menu
+    public class Menu
     {
-        public static IEnumerable<Food> Foods;
+        private readonly AppDbContext _context;
+
+        public Menu(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public IEnumerable<Food> Foods => _context.Foods;
     }
 }

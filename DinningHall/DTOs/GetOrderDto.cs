@@ -3,25 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using DinningHall.Models;
 
-namespace DinningHall.Models
+namespace DinningHall.DTOs
 {
-    public sealed class Order
+    public class GetOrderDto
     {
-        [Required]
         public Guid Id { get; set; }
 
-        [Required]
-        public Guid TableId { get; set; }
-
-        [Required]
         public IList<Food> Foods { get; set; }
-
-        [Required]
-        [Range(1, 5)]
+        
         public byte Priority { get; set; }
 
-        [Required]
         public int MaxWaitTime { get; set; }
     }
 }
