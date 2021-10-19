@@ -19,11 +19,11 @@ namespace DinningHall.Data
             _context = context;
             this._mapper = _mapper;
         }
-        public Task<GetOrderDto> CreateOrder(CreateOrderDto order)
+        public Task<OrderDto> CreateOrder(CreateOrderDto order)
         {
             var orderToReturn = _context.Orders.Add(_mapper.Map<Order>(order));
             _context.SaveChanges();
-            return Task.Run(() => _mapper.Map<GetOrderDto>(orderToReturn));
+            return Task.Run(() => _mapper.Map<OrderDto>(orderToReturn));
         }
 
         public Task DeleteOrder(Guid orderId)
@@ -38,7 +38,7 @@ namespace DinningHall.Data
             return Task.Run(() => _context.SaveChanges());
         }
 
-        public Task<GetOrderDto> GetOrderById(Guid orderId)
+        public Task<OrderDto> GetOrderById(Guid orderId)
         {
             var order = _context.Orders.FirstOrDefault(o => o.Id == orderId);
             if (order == null)
@@ -46,18 +46,18 @@ namespace DinningHall.Data
                 throw new ArgumentException($"Order with id:{orderId} not found.");
             }
 
-            return Task.Run(() => _mapper.Map<GetOrderDto>(order));
+            return Task.Run(() => _mapper.Map<OrderDto>(order));
         }
 
-        public Task<IEnumerable<GetOrderDto>> CreateOrders(IEnumerable<CreateOrderDto> orders)
+        public Task<IEnumerable<OrderDto>> CreateOrders(IEnumerable<CreateOrderDto> orders)
         {
             var ordersToCreate = _mapper.Map<Order>(orders);
             _context.Orders.AddRange(ordersToCreate);
             _context.SaveChanges();
-            return Task.Run(() => _mapper.Map<IEnumerable<GetOrderDto>>(ordersToCreate));
+            return Task.Run(() => _mapper.Map<IEnumerable<OrderDto>>(ordersToCreate));
         }
 
-        public Task<GetOrderDto> GetOrderByTableId(Guid tableId)
+        public Task<OrderDto> GetOrderByTableId(Guid tableId)
         {
             var table = _context.Tables.FirstOrDefault(t => t.Id == tableId);
             if (table == null)
@@ -65,7 +65,7 @@ namespace DinningHall.Data
                 throw new ArgumentException($"Table with Id:{tableId} not found.");
             }
 
-            return Task.Run(() => _mapper.Map<GetOrderDto>(table.Order));
+            return Task.Run(() => _mapper.Map<OrderDto>(table.Order));
         }
     }
 }

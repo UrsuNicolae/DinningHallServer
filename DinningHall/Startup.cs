@@ -35,6 +35,7 @@ namespace Dinning_Hall
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IWaiterRepository, WaiterRepository>();
             services.AddScoped<ITableRepository, TableRepository>();
+            services.AddScoped<IFoodRepository, FoodRepository>();
 
             services.AddHttpClient<IHttpDataClient, HttpDataClient>();
             

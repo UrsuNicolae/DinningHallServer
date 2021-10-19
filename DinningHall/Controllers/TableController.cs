@@ -21,19 +21,19 @@ namespace DinningHall.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<GetTableDto>> GetTables()
+        public ActionResult<IEnumerable<TableDto>> GetTables()
         {
             return Ok(_repo.GetAllTables());
         }
 
         [HttpGet("{tableId}")]
-        public ActionResult<GetTableDto> GetTable(Guid tableId)
+        public ActionResult<TableDto> GetTable(Guid tableId)
         {
             return Ok(_repo.GetTableById(tableId));
         }
 
         [HttpPost]
-        public ActionResult<GetTableDto> CreateTable(CreateTableDto table)
+        public ActionResult<TableDto> CreateTable(CreateTableDto table)
         {
             var tableModel = _repo.CreateTable(table).Result;
             return CreatedAtAction(nameof(GetTable), new { tableId = tableModel.Id}, tableModel);
@@ -47,7 +47,7 @@ namespace DinningHall.Controllers
         }
 
         [HttpPost("{nr}")]
-        public ActionResult<IEnumerable<GetTableDto>> CreateNTables(int nr)
+        public ActionResult<IEnumerable<TableDto>> CreateNTables(int nr)
         {
             return Ok(_repo.CreateNTables(nr));
         }

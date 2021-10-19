@@ -7,7 +7,7 @@ using DinningHall.Models.Enums;
 
 namespace DinningHall.Models
 {
-    public sealed class Table
+    public class Table
     {
         [Required]
         public Guid Id { get; set; }

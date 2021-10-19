@@ -19,12 +19,12 @@ namespace DinningHall.Data
             _context = context;
             _mapper = mapper;
         }
-        public Task<GetWaiterDto> CreateWaiter(CreateWaiterDto waiter)
+        public Task<WaiterDto> CreateWaiter(CreateWaiterDto waiter)
         {
             var waiterToCreate = _mapper.Map<Waiter>(waiter);
             _context.Waiters.Add(waiterToCreate);
             _context.SaveChanges();
-            return Task.Run(() => _mapper.Map<GetWaiterDto>(waiterToCreate));
+            return Task.Run(() => _mapper.Map<WaiterDto>(waiterToCreate));
         }
 
         public Task DeleteWaiter(Guid waiterId)
@@ -40,7 +40,7 @@ namespace DinningHall.Data
             return Task.CompletedTask;
         }
 
-        public Task<GetWaiterDto> GetWaiterById(Guid waiterId)
+        public Task<WaiterDto> GetWaiterById(Guid waiterId)
         {
             var waiterToReturn = _context.Waiters.FirstOrDefault(t => t.Id == waiterId);
             if (waiterToReturn == null)
@@ -48,25 +48,38 @@ namespace DinningHall.Data
                 throw new ArgumentException($"Waiter with id:{waiterId} not found.");
             }
 
-            return Task.Run(() => _mapper.Map<GetWaiterDto>(waiterToReturn));
+            return Task.Run(() => _mapper.Map<WaiterDto>(waiterToReturn));
         }
 
-        public Task<IEnumerable<GetWaiterDto>> GetAllWaiters()
+        public Task<IEnumerable<WaiterDto>> GetAllWaiters()
         {
-            return Task.Run(() => _mapper.Map<IEnumerable<GetWaiterDto>>(_context.Waiters));
+            return Task.Run(() => _mapper.Map<IEnumerable<WaiterDto>>(_context.Waiters));
         }
 
-        public Task<IEnumerable<GetWaiterDto>> CreateNWaiters(int nr)
+        public Task<IEnumerable<WaiterDto>> CreateNWaiters(int nr)
         {
             var waiters = new List<Waiter>();
             while (nr > 0)
             {
-                waiters.Add(_context.Waiters.Add(new Waiter { IsFree = true}).Entity);
+                waiters.Add(_context.Waiters.Add(new Waiter { IsFree = true }).Entity);
                 nr--;
             }
 
             _context.SaveChanges();
-            return Task.Run(() => _mapper.Map<IEnumerable<GetWaiterDto>>(waiters));
+            return Task.Run(() => _mapper.Map<IEnumerable<WaiterDto>>(waiters));
+        }
+
+        public Task<WaiterDto> UpdateWaiter(WaiterDto waiter)
+        {
+            var waiterToUpdate = _context.Waiters.FirstOrDefault(w => w.Id == waiter.Id);
+            if (waiterToUpdate == null)
+            {
+                throw new ArgumentException($"Waiter with id: {waiter.Id} not found");
+            }
+
+            waiterToUpdate.IsFree = waiter.IsFree;
+            _context.SaveChanges();
+            return Task.Run(() => _mapper.Map<WaiterDto>(waiterToUpdate));
         }
     }
 }

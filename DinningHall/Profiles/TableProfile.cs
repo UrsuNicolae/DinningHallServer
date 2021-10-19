@@ -14,7 +14,7 @@ namespace DinningHall.Profiles
         {
             CreateMap<CreateTableDto, Table>()
                 .ForMember(t => t.Order, m => m.MapFrom(src => src.Order));
-            CreateMap<Table, GetTableDto>()
+            CreateMap<Table, TableDto>()
                 .ForMember(t => t.Order, m => m.MapFrom(src => src.Order)); ;
         }
     }

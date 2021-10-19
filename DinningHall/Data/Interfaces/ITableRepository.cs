@@ -8,14 +8,16 @@ namespace DinningHall.Data.Interfaces
 {
     public interface ITableRepository
     {
-        Task<GetTableDto> CreateTable(CreateTableDto table);
+        Task<TableDto> CreateTable(CreateTableDto table);
 
         Task DeleteTable(Guid tableId);
 
-        Task<GetTableDto> GetTableById(Guid tableId);
+        Task<TableDto> GetTableById(Guid tableId);
 
-        Task<IEnumerable<GetTableDto>> GetAllTables();
+        Task<IEnumerable<TableDto>> GetAllTables();
 
-        Task<IEnumerable<GetTableDto>> CreateNTables(int nr);
+        Task<IEnumerable<TableDto>> CreateNTables(int nr);
+
+        Task<TableDto> UpdateTable(TableDto table);
     }
 }

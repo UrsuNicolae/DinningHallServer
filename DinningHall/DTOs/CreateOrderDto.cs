@@ -10,6 +10,9 @@ namespace DinningHall.DTOs
     public class CreateOrderDto
     {
         [Required]
+        public Guid TableId { get; set; }
+
+        [Required]
         public IList<Food> Foods { get; set; }
 
         [Required]
@@ -17,6 +20,9 @@ namespace DinningHall.DTOs
         public byte Priority { get; set; }
 
         [Required]
-        public int MaxWaitTime { get; set; }
+        public Double MaxWaitTime { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; }
     }
 }

@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using DinningHall.Data.Interfaces;
+using DinningHall.DTOs;
+using DinningHall.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using DinningHall.Models;
+using DinningHall.Http;
+using DinningHall.Models.Enums;
 
 namespace Dinning_Hall.Controllers
 {
@@ -14,63 +15,129 @@ namespace Dinning_Hall.Controllers
     [Route("api/[controller]/[action]")]
     public class ServeController : ControllerBase
     {
-        private static readonly HttpClient _client = new HttpClient();
-        private static readonly Waiter[] waiters = new Waiter[]
-        {
-            new Waiter(), new Waiter()
-        };
-        private readonly ILogger<ServeController> _logger;
+        private readonly IOrderRepository _orderRepo;
+        private readonly ITableRepository _tableRepo;
+        private readonly IWaiterRepository _waiterRepo;
+        private readonly IFoodRepository _foodRepo;
+        private readonly IHttpDataClient _httpClient;
 
-        private IEnumerable<Table> tables;
-
-        public ServeController(ILogger<ServeController>logger)
+        public ServeController(
+            IOrderRepository orderRepo,
+            ITableRepository tableRepo,
+            IWaiterRepository waiterRepo,
+            IFoodRepository foodRepo,
+            IHttpDataClient httpClient)
         {
-            _logger = logger;
+            _orderRepo = orderRepo;
+            _tableRepo = tableRepo;
+            _waiterRepo = waiterRepo;
+            _foodRepo = foodRepo;
+            _httpClient = httpClient;
         }
+        
 
         [HttpGet]
-        public async Task GetTables()
+        public ActionResult StartSimulation()
         {
-            var response = await _client.GetAsync("https://localhost:5001/api/Serve/Tables");
-            var nrOfTables = Convert.ToInt32(await response.Content.ReadAsStringAsync());
-
-            var tbs = new List<Table>();
-            for (int i = 0; i < nrOfTables; i++)
+            var tables = _tableRepo.GetAllTables().Result;
+            foreach (var table in tables)
             {
-                tbs.Add(new Table());
+                var rnd = new Random();
+                if (rnd.Next(0, 1) == 1)
+                {
+                    GenerateOrder(table.Id);
+                    UpdateTable(table.Id);
+                }
             }
-            tables = tbs;
-            _logger.LogInformation($"Nr of table received {nrOfTables}");
-            SendOrder();
+
+            return Ok();
         }
 
         [HttpPost]
-        public void SendOrder()
+        public async Task StartSendingOrders()
         {
+            var tables = _tableRepo.GetAllTables().Result;
+            var waiters = _waiterRepo.GetAllWaiters().Result;
             while (true)
             {
+                foreach (var waiter in waiters)
+                {
+                    if (waiter.IsFree)
+                    {
+                        var table = tables.FirstOrDefault(t => t.TableStatus == TableStatus.WaitToOrder);
+                        if (table != null)
+                        {
+                            waiter.IsFree = false;
+                            _waiterRepo.UpdateWaiter(waiter);
+                            _httpClient.SendOrder(table.Order)
+                        }
+                    }
+                    async Task<string> func()
+                    {
+                        var response = await client.GetAsync("posts/" + post);
+                        return await response.Content.ReadAsStringAsync();
+                    }
+
+                    tasks.Add(func());
+                }
+                await Task.WhenAll(tasks);
+
                 if (waiters.Any(w => w.IsFree))
                 {
                     var waiter = waiters.FirstOrDefault(w => w.IsFree);
-                    //var tb = waiter?.FindTableToServe(tables);
-                    var request = new HttpRequestMessage()
+                    waiter.IsFree = false;
+                    if (tables.Any(t => !t.IsFree && t.TableStatus == TableStatus.WaitToOrder))
                     {
-                        RequestUri = new Uri("https://localhost:5001/api/Serve/Order"),
-                        Method = HttpMethod.Post,
-                    };
-                    request.Headers.Add("accept", "text/plain");
-                    request.Content =
-                        new StringContent(
-                            "{\r\n  \"foods\": [\r\n    {\r\n      \"name\": \"string\",\r\n      \"preparationTime\": {},\r\n      \"complexity\": 0,\r\n      \"cookingApparatus\": 0\r\n    }\r\n  ]\r\n}", Encoding.UTF8, "application/json");
+                        var table = tables.FirstOrDefault(t => !t.IsFree && t.TableStatus == TableStatus.WaitToOrder);
+                        waiter = _waiterRepo.UpdateWaiter(waiter).Result;
+                        Task.Delay(2000);//todo create call
+                        waiter.IsFree = true;
+                        waiter = _waiterRepo.UpdateWaiter(waiter).Result;
 
-                    Task.Factory.StartNew(() =>
-                        {
-                            var response = _client.SendAsync(request).ConfigureAwait(false);
-                            _logger.LogInformation(response.GetAwaiter().GetResult().Content.ReadAsStringAsync().Result);
-                        });
+                    }
+                    //var tb = waiter?.FindTableToServe(tables);;
+                    
                 }
             }
 
         }
+
+        #region helpers
+
+        private void  GenerateOrder(Guid tableId)
+        {
+            var nrOfFoods = new Random().Next(1, 10);
+            var foodsFromDb = _foodRepo.GetAllFoods().Result.ToList();
+            var foods = new List<Food>();
+            var highestPreparationTime = int.MinValue;
+            while (nrOfFoods > 0)
+            {
+                var foodToAdd = foodsFromDb.ElementAt(new Random().Next(0, 9));
+                if (highestPreparationTime < foodToAdd.PreparationTime)
+                {
+                    highestPreparationTime = foodToAdd.PreparationTime;
+                }
+                foods.Add(foodToAdd);
+                nrOfFoods--;
+            }
+
+            _orderRepo.CreateOrder(new CreateOrderDto
+            {
+                Foods = foods,
+                MaxWaitTime = highestPreparationTime * 1.3,
+                Priority = (byte) new Random().Next(1, 5),
+                TableId = tableId,
+                CreatedAt = DateTime.UtcNow
+            });
+
+        }
+
+        private void UpdateTable(Guid tableId)
+        {
+            var tableFromRepo = _tableRepo.GetTableById(tableId).Result;
+            tableFromRepo.IsFree = false;
+            _tableRepo.UpdateTable(tableFromRepo);
+        }
+        #endregion
     }
 }

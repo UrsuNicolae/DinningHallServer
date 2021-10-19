@@ -8,15 +8,15 @@ namespace DinningHall.Data.Interfaces
 {
     public interface IOrderRepository
     {
-        Task<GetOrderDto> CreateOrder(CreateOrderDto order);
+        Task<OrderDto> CreateOrder(CreateOrderDto order);
 
         Task DeleteOrder(Guid orderId);
 
-        Task<GetOrderDto >GetOrderById(Guid orderId);
+        Task<OrderDto >GetOrderById(Guid orderId);
 
-        Task<IEnumerable<GetOrderDto>> CreateOrders(IEnumerable<CreateOrderDto> orders);
+        Task<IEnumerable<OrderDto>> CreateOrders(IEnumerable<CreateOrderDto> orders);
 
-        Task<GetOrderDto> GetOrderByTableId(Guid tableId);
+        Task<OrderDto> GetOrderByTableId(Guid tableId);
 
     }
 }

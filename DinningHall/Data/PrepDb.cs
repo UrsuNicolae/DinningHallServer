@@ -31,7 +31,7 @@ namespace DinningHall.Data
         {
             Id = 1,
             Name = "Pizza",
-            PreparationTime = TimeSpan.FromSeconds(20),
+            PreparationTime = 20,
             Complexity = 2,
             CookingApparatus = CookingApparatuses.Oven
         },
@@ -39,7 +39,7 @@ namespace DinningHall.Data
         {
             Id = 2,
             Name = "Salad",
-            PreparationTime = TimeSpan.FromSeconds(10),
+            PreparationTime = 10,
             Complexity = 1,
             CookingApparatus = CookingApparatuses.None
         },
@@ -47,7 +47,7 @@ namespace DinningHall.Data
         {
             Id = 3,
             Name = "Zeama",
-            PreparationTime = TimeSpan.FromSeconds(7),
+            PreparationTime = 7,
             Complexity = 1,
             CookingApparatus = CookingApparatuses.Stove
         },
@@ -55,7 +55,7 @@ namespace DinningHall.Data
         {
             Id = 4,
             Name = "Scallop Sashimi with Meyer Lemon Cofit",
-            PreparationTime = TimeSpan.FromSeconds(32),
+            PreparationTime = 32,
             Complexity = 3,
             CookingApparatus = CookingApparatuses.None
         },
@@ -63,7 +63,7 @@ namespace DinningHall.Data
         {
             Id = 5,
             Name = "Island Duck with Mulberry Mustard",
-            PreparationTime = TimeSpan.FromSeconds(35),
+            PreparationTime = 35,
             Complexity = 3,
             CookingApparatus = CookingApparatuses.Oven
         },
@@ -71,7 +71,7 @@ namespace DinningHall.Data
         {
             Id = 6,
             Name = "Waffles",
-            PreparationTime = TimeSpan.FromSeconds(10),
+            PreparationTime = 10,
             Complexity = 1,
             CookingApparatus = CookingApparatuses.Stove
         },
@@ -79,7 +79,7 @@ namespace DinningHall.Data
         {
             Id = 7,
             Name = "Aubergine",
-            PreparationTime = TimeSpan.FromSeconds(20),
+            PreparationTime = 20,
             Complexity = 2,
             CookingApparatus = CookingApparatuses.None
         },
@@ -87,7 +87,7 @@ namespace DinningHall.Data
         {
             Id = 8,
             Name = "Lasagna",
-            PreparationTime = TimeSpan.FromSeconds(30),
+            PreparationTime = 30,
             Complexity = 2,
             CookingApparatus = CookingApparatuses.Oven
         },
@@ -95,7 +95,7 @@ namespace DinningHall.Data
         {
             Id = 9,
             Name = "Burger",
-            PreparationTime = TimeSpan.FromSeconds(15),
+            PreparationTime = 15,
             Complexity = 1,
             CookingApparatus = CookingApparatuses.Oven
         },
@@ -103,7 +103,7 @@ namespace DinningHall.Data
         {
             Id = 10,
             Name = "Gyros",
-            PreparationTime = TimeSpan.FromSeconds(15),
+            PreparationTime = 15,
             Complexity = 1,
             CookingApparatus = CookingApparatuses.None
         }
@@ -121,14 +121,6 @@ namespace DinningHall.Data
 
                 context.Waiters.AddRange(new List<Waiter>
                 {
-                    new ()
-                    {
-                        IsFree = true
-                    },
-                    new ()
-                    {
-                        IsFree = true
-                    },
                     new ()
                     {
                         IsFree = true

@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace DinningHall.DTOs
 {
-    public class GetWaiterDto
+    public class ReceiveOrderDto : OrderDto
     {
-        public Guid Id { get; set; }
-        public bool IsFree { get; set; }
+        public DateTime Received { get; set; }
+
+        public DateTime PreparedIn { get; set; }
     }
 }

@@ -21,5 +21,12 @@ namespace DinningHall.Data
         public DbSet<Waiter> Waiters { get; set; }
 
         public DbSet<Food> Foods { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Table>()
+                .HasOne(t => t.Order).WithOne(o => o.Table)
+                .HasForeignKey<Order>(e => e.TableId);
+        }
     }
 }

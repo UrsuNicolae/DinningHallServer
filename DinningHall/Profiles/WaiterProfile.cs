@@ -13,7 +13,7 @@ namespace DinningHall.Profiles
         public WaiterProfile()
         {
             CreateMap<CreateWaiterDto, Waiter>();
-            CreateMap<Waiter, GetWaiterDto>();
+            CreateMap<Waiter, WaiterDto>();
         }
     }
 }

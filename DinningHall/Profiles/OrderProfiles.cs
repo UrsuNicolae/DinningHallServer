@@ -15,7 +15,7 @@ namespace DinningHall.Profiles
             //Source -> Target
             CreateMap<CreateOrderDto, Order>()
                 .ForMember(o => o.Foods, m => m.MapFrom(src => src.Foods));
-            CreateMap<Order, GetOrderDto>()
+            CreateMap<Order, OrderDto>()
                 .ForMember(o => o.Foods, m => m.MapFrom(src => src.Foods));
         }
     }

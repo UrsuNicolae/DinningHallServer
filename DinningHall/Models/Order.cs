@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 
 namespace DinningHall.Models
 {
-    public sealed class Order
+    public class Order
     {
         [Required]
         public Guid Id { get; set; }
 
         [Required]
         public Guid TableId { get; set; }
-
-        [Required]
+        public Table Table { get; set; }
+        
         public IList<Food> Foods { get; set; }
 
         [Required]
@@ -22,6 +23,9 @@ namespace DinningHall.Models
         public byte Priority { get; set; }
 
         [Required]
-        public int MaxWaitTime { get; set; }
+        public double MaxWaitTime { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; }
     }
 }

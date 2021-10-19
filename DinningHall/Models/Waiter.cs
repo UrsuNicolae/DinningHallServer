@@ -6,7 +6,7 @@ using DinningHall.Models.Enums;
 
 namespace DinningHall.Models
 {
-    public sealed class Waiter
+    public class Waiter
     {
         public Guid Id { get; set; }
 

@@ -20,12 +20,12 @@ namespace DinningHall.Data
             _context = context;
             _mapper = mapper;
         }
-        public Task<GetTableDto> CreateTable(CreateTableDto table)
+        public Task<TableDto> CreateTable(CreateTableDto table)
         {
             var tableToCreate = _mapper.Map<Table>(table);
             _context.Tables.Add(tableToCreate);
             _context.SaveChanges();
-            return Task.Run(() => _mapper.Map<GetTableDto>(tableToCreate));
+            return Task.Run(() => _mapper.Map<TableDto>(tableToCreate));
         }
 
         public Task DeleteTable(Guid tableId)
@@ -41,7 +41,7 @@ namespace DinningHall.Data
             return Task.CompletedTask;
         }
 
-        public Task<GetTableDto> GetTableById(Guid tableId)
+        public Task<TableDto> GetTableById(Guid tableId)
         {
             var tableToReturn = _context.Tables.FirstOrDefault(t => t.Id == tableId);
             if (tableToReturn == null)
@@ -49,15 +49,15 @@ namespace DinningHall.Data
                 throw new ArgumentException($"Table with id:{tableId} not found.");
             }
 
-            return Task.Run(() => _mapper.Map<GetTableDto>(tableToReturn));
+            return Task.Run(() => _mapper.Map<TableDto>(tableToReturn));
         }
 
-        public Task<IEnumerable<GetTableDto>> GetAllTables()
+        public Task<IEnumerable<TableDto>> GetAllTables()
         {
-            return Task.Run(() => _mapper.Map<IEnumerable<GetTableDto>>(_context.Tables));
+            return Task.Run(() => _mapper.Map<IEnumerable<TableDto>>(_context.Tables));
         }
 
-        public Task<IEnumerable<GetTableDto>> CreateNTables(int nr)
+        public Task<IEnumerable<TableDto>> CreateNTables(int nr)
         {
             var tables = new List<Table>();
             while(nr > 0)
@@ -67,7 +67,21 @@ namespace DinningHall.Data
             }
 
             _context.SaveChanges();
-            return Task.Run(() =>_mapper.Map<IEnumerable<GetTableDto>>(tables));
+            return Task.Run(() =>_mapper.Map<IEnumerable<TableDto>>(tables));
+        }
+
+        public Task<TableDto> UpdateTable(TableDto table)
+        {
+            var tableToUpdate = _context.Tables.FirstOrDefault(t => t.Id == table.Id);
+            if (tableToUpdate == null)
+            {
+                throw new ArgumentException($"Table with id: {table.Id} not found.");
+            }
+
+            tableToUpdate.IsFree = table.IsFree;
+            tableToUpdate.TableStatus = tableToUpdate.TableStatus;
+            _context.SaveChanges();
+            return Task.Run(() => _mapper.Map<TableDto>(tableToUpdate));
         }
     }
 }

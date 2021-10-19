@@ -16,7 +16,7 @@ namespace DinningHall.Models
         public string Name { get; set; }
 
         [Required]
-        public TimeSpan PreparationTime { get; set; }
+        public int PreparationTime { get; set; }
 
         [Required]
         public int Complexity { get; set; }

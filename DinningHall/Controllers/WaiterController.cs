@@ -21,14 +21,14 @@ namespace DinningHall.Controllers
         }
 
         [HttpGet("{waiterId}")]
-        public ActionResult<GetWaiterDto> GetWaiter(Guid waiterId)
+        public ActionResult<WaiterDto> GetWaiter(Guid waiterId)
         {
             var waiterModel = _repo.GetWaiterById(waiterId).Result;
             return Ok(waiterModel);
         }
 
         [HttpGet]
-        public ActionResult<GetWaiterDto> GetWaiters()
+        public ActionResult<WaiterDto> GetWaiters()
         {
             return Ok(_repo.GetAllWaiters());
         }
@@ -41,14 +41,14 @@ namespace DinningHall.Controllers
         }
 
         [HttpPost]
-        public ActionResult<GetWaiterDto> CreateWaiter(CreateWaiterDto waiter)
+        public ActionResult<WaiterDto> CreateWaiter(CreateWaiterDto waiter)
         {
             var waiterModel = _repo.CreateWaiter(waiter);
             return CreatedAtAction(nameof(GetWaiter), new { waiterId = waiterModel.Id}, waiterModel);
         }
 
         [HttpPost("{nr}")]
-        public ActionResult<IEnumerable<GetWaiterDto>> CreateNWaiters(int nr)
+        public ActionResult<IEnumerable<WaiterDto>> CreateNWaiters(int nr)
         {
             return Ok(_repo.CreateNWaiters(nr));
         }

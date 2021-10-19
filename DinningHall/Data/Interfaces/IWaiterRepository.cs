@@ -8,14 +8,16 @@ namespace DinningHall.Data.Interfaces
 {
     public interface IWaiterRepository
     {
-        Task<GetWaiterDto> CreateWaiter(CreateWaiterDto waiter);
+        Task<WaiterDto> CreateWaiter(CreateWaiterDto waiter);
 
         Task DeleteWaiter(Guid waiterId);
 
-        Task<GetWaiterDto> GetWaiterById(Guid waiterId);
+        Task<WaiterDto> GetWaiterById(Guid waiterId);
 
-        Task<IEnumerable<GetWaiterDto>> GetAllWaiters();
+        Task<IEnumerable<WaiterDto>> GetAllWaiters();
 
-        Task<IEnumerable<GetWaiterDto>> CreateNWaiters(int nr);
+        Task<IEnumerable<WaiterDto>> CreateNWaiters(int nr);
+
+        Task<WaiterDto> UpdateWaiter(WaiterDto waiter);
     }
 }

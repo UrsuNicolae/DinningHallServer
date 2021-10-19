@@ -7,14 +7,7 @@ using DinningHall.Models;
 
 namespace DinningHall.DTOs
 {
-    public class GetOrderDto
+    public class OrderDto : Order
     {
-        public Guid Id { get; set; }
-
-        public IList<Food> Foods { get; set; }
-        
-        public byte Priority { get; set; }
-
-        public int MaxWaitTime { get; set; }
     }
 }
