@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using DinningHall.DTOs;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using DinningHall.DTOs;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace DinningHall.Http
 {
@@ -24,14 +22,18 @@ namespace DinningHall.Http
             _configuration = configuration;
         }
 
-        public Task SendOrder(OrderDto order)
+        public async Task<HttpResponseMessage> SendOrder(OrderDto order)
         {
             var httpContent = new StringContent(
-                JsonSerializer.Serialize(order),
+                JsonConvert.SerializeObject(order, new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                }),
                 Encoding.UTF8,
                 "application/json");
             Console.WriteLine($"--> Send order {order.Id} to kitchen");
-            return _httpClient.PostAsync($"{_configuration["KitchenUrl"]}", httpContent);
+            var url = $"{_configuration["KitchenUrl"]}";
+            return await _httpClient.PostAsync(url, httpContent);
         }
     }
 }

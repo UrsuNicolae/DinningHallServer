@@ -1,22 +1,17 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DinningHall.Data;
 using DinningHall.Data.Interfaces;
 using DinningHall.Http;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using System;
+using Newtonsoft.Json;
 
-namespace Dinning_Hall
+namespace DinningHall
 {
     public class Startup
     {
@@ -36,14 +31,17 @@ namespace Dinning_Hall
             services.AddScoped<IWaiterRepository, WaiterRepository>();
             services.AddScoped<ITableRepository, TableRepository>();
             services.AddScoped<IFoodRepository, FoodRepository>();
+            services.AddSingleton<DbContextFactory>();
 
             services.AddHttpClient<IHttpDataClient, HttpDataClient>();
-            
-            services.AddControllers();
+
+            services.AddControllers().AddNewtonsoftJson(
+                options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dinning_Hall", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "DinningHall", Version = "v1" });
             });
 
             services.AddCors();
@@ -56,7 +54,7 @@ namespace Dinning_Hall
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dinning_Hall v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DinningHall v1"));
             }
 
             app.UseCors(options => options.WithOrigins(new []{ "https://localhost:5001", "http://localhost:5000" })

@@ -17,10 +17,10 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Dinning_Hall": {
+    "DinningHall": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/Serve/SendOrder",
+      "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
