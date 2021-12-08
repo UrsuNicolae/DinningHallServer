@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DinningHall.Models;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace DinningHall.Data
 {
@@ -27,6 +28,12 @@ namespace DinningHall.Data
             modelBuilder.Entity<Table>()
                 .HasOne(t => t.Order).WithOne(o => o.Table)
                 .HasForeignKey<Order>(e => e.TableId);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.FoodsIds)
+                .HasConversion(
+                    f => JsonConvert.SerializeObject(f),
+                    f => JsonConvert.DeserializeObject<List<int>>(f));
         }
     }
 }

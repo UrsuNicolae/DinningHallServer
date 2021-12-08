@@ -19,10 +19,12 @@ namespace DinningHall.Data
             _contextFactory = contextFactory;
             this._mapper = _mapper;
         }
-        public Task<OrderDto> CreateOrder(CreateOrderDto order)
+        public Task<OrderDto> CreateOrder(CreateOrderDto model)
         {
             var context = _contextFactory.Create();
-            var orderToReturn = context.Orders.Add(_mapper.Map<Order>(order)).Entity;
+            var order = _mapper.Map<Order>(model);
+            order.FoodsIds = order.Foods.Select(f => f.Id).ToList();
+            var orderToReturn = context.Orders.Add(order).Entity;
             SaveChanges(context);
             return Task.Run(() => _mapper.Map<OrderDto>(orderToReturn));
         }

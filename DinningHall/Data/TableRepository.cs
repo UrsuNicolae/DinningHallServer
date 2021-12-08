@@ -56,10 +56,21 @@ namespace DinningHall.Data
             return Task.Run(() => _mapper.Map<TableDto>(tableToReturn));
         }
 
-        public Task<IEnumerable<TableDto>> GetAllTables()
+        public async Task<IEnumerable<TableDto>> GetAllTables()
         {
             var context = _contextFactory.Create();
-            return Task.Run(() => _mapper.Map<IEnumerable<TableDto>>(context.Tables.Include(t => t.Order)));
+            var tables = context.Tables.Include(t => t.Order);
+            foreach (var table in tables)
+            {
+                if (table.Order != null && table.Order?.FoodsIds != null)
+                {
+                    foreach (var foodId in table.Order.FoodsIds)
+                    {
+                        table.Order.Foods.Add(await context.Foods.FirstOrDefaultAsync(t => t.Id == foodId));
+                    }
+                }
+            }
+            return _mapper.Map<IEnumerable<TableDto>>(tables);
         }
 
         public Task<IEnumerable<TableDto>> CreateNTables(int nr)
