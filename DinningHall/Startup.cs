@@ -57,12 +57,12 @@ namespace DinningHall
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DinningHall v1"));
             }
 
-            app.UseCors(options => options.WithOrigins(new []{ "https://localhost:5001", "http://localhost:5000" })
+            app.UseCors(options => options.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
             );
 
-            app.UseHttpsRedirection();
+            /*app.UseHttpsRedirection();*/
 
             app.UseRouting();
 

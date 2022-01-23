@@ -8,8 +8,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using DinningHall.Data;
 using DinningHall.Http;
 using DinningHall.Models.Enums;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace DinningHall.Controllers
 {
@@ -23,7 +26,7 @@ namespace DinningHall.Controllers
         private readonly IFoodRepository _foodRepo;
         private readonly IHttpDataClient _httpClient;
         private readonly IMapper _mapper;
-
+        private readonly IConfiguration _configuration;
         private static double reputation = 0;
         private static int nrSent = 0;
         private const int maxWait = 30;//seconds
@@ -35,7 +38,8 @@ namespace DinningHall.Controllers
             IWaiterRepository waiterRepo,
             IFoodRepository foodRepo,
             IHttpDataClient httpClient,
-            IMapper mapper)
+            IMapper mapper,
+            IConfiguration configuration)
         {
             _orderRepo = orderRepo;
             _tableRepo = tableRepo;
@@ -43,6 +47,7 @@ namespace DinningHall.Controllers
             _foodRepo = foodRepo;
             _httpClient = httpClient;
             _mapper = mapper;
+            _configuration = configuration; ;
         }
 
 
@@ -68,15 +73,16 @@ namespace DinningHall.Controllers
         public async Task StartSendingOrders()
         {
             canSendOrders = true;
+            Console.WriteLine($"{_configuration["KitchenUrl"]}");
             while (canSendOrders)
             {
-                Console.WriteLine($"--> Reputation is {reputation}");
-                foreach (var waiter in await _waiterRepo.GetAllWaiters())
+                foreach(var waiter in await _waiterRepo.GetAllWaiters())
                 {
                     if (waiter.IsFree)
                     {
-                        var table = (await _tableRepo.GetAllTables()).FirstOrDefault(t => t.TableStatus == TableStatus.WaitToOrder &&
-                                                          !t.IsFree);
+                        var table = (await _tableRepo.GetAllTables()).FirstOrDefault(t =>
+                            t.TableStatus == TableStatus.WaitToOrder &&
+                            !t.IsFree);
                         if (table != null)
                         {
                             waiter.IsFree = false;
@@ -85,6 +91,7 @@ namespace DinningHall.Controllers
                             await _tableRepo.UpdateTable(table);
                             var sentAt = DateTime.UtcNow;
                             nrSent++;
+                            Console.WriteLine($"--> Reputation is {reputation}");
                             var response = await _httpClient.SendOrder(_mapper.Map<OrderDto>(table.Order));
                             if (response.IsSuccessStatusCode)
                             {
@@ -117,7 +124,8 @@ namespace DinningHall.Controllers
                             }
                         }
                     }
-                }
+
+                };
             }
         }
 

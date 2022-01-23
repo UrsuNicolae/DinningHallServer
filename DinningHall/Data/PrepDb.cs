@@ -132,6 +132,10 @@ namespace DinningHall.Data
                     new ()
                     {
                         IsFree = true
+                    },
+                    new ()
+                    {
+                        IsFree = true
                     }
                 });
             }
@@ -146,6 +150,36 @@ namespace DinningHall.Data
                 context.Tables.AddRange(
                     new List<Table>
                 {
+                        new ()
+                        {
+                            IsFree = true,
+                            Order = null,
+                            TableStatus = TableStatus.WaitToOrder
+                        },
+                        new ()
+                        {
+                            IsFree = true,
+                            Order = null,
+                            TableStatus = TableStatus.WaitToOrder
+                        },
+                        new ()
+                        {
+                            IsFree = true,
+                            Order = null,
+                            TableStatus = TableStatus.WaitToOrder
+                        },
+                        new ()
+                        {
+                            IsFree = true,
+                            Order = null,
+                            TableStatus = TableStatus.WaitToOrder
+                        },
+                        new ()
+                        {
+                            IsFree = true,
+                            Order = null,
+                            TableStatus = TableStatus.WaitToOrder
+                        },
                         new ()
                         {
                             IsFree = true,
