@@ -11,21 +11,18 @@ namespace DinningHall.Data
 {
     public class PrepDb
     {
-        public static void PrepPopulation(IApplicationBuilder app)
+        public static void PrepPopulation()
         {
-            using (var serviceScope = app.ApplicationServices.CreateScope())
-            {
-                SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>());
-            }
+            SeedData();
         }
 
-        private static void SeedData(AppDbContext context)
+        private static void SeedData()
         {
-            if (!context.Foods.Any())
+            if (!StaticContext.Foods.Any())
             {
                 Console.WriteLine("--> Seeding foods...");
 
-                context.Foods.AddRange(
+                StaticContext.Foods.AddRange(
                     new List<Food>{
         new()
         {
@@ -115,11 +112,11 @@ namespace DinningHall.Data
                 Console.WriteLine("--> We already have foods");
             }
 
-            if (!context.Waiters.Any())
+            if (!StaticContext.Waiters.Any())
             {
                 Console.WriteLine("--> Seeding waiters...");
 
-                context.Waiters.AddRange(new List<Waiter>
+                StaticContext.Waiters.AddRange(new List<Waiter>
                 {
                     new ()
                     {
@@ -144,10 +141,10 @@ namespace DinningHall.Data
                 Console.WriteLine("--> We already have waiters");
             }
 
-            if (!context.Tables.Any())
+            if (!StaticContext.Tables.Any())
             {
                 Console.WriteLine("--> Seeding tables...");
-                context.Tables.AddRange(
+                StaticContext.Tables.AddRange(
                     new List<Table>
                 {
                         new ()
@@ -216,8 +213,6 @@ namespace DinningHall.Data
             {
                 Console.WriteLine("--> We already have tables");
             }
-
-            context.SaveChanges();
         }
     }
 }

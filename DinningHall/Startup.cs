@@ -73,7 +73,7 @@ namespace DinningHall
                 endpoints.MapControllers();
             });
 
-            PrepDb.PrepPopulation(app);
+            PrepDb.PrepPopulation();
         }
     }
 }

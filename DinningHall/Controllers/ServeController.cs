@@ -20,10 +20,6 @@ namespace DinningHall.Controllers
     [Route("api/[controller]/[action]")]
     public class ServeController : ControllerBase
     {
-        private readonly IOrderRepository _orderRepo;
-        private readonly ITableRepository _tableRepo;
-        private readonly IWaiterRepository _waiterRepo;
-        private readonly IFoodRepository _foodRepo;
         private readonly IHttpDataClient _httpClient;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
@@ -33,18 +29,10 @@ namespace DinningHall.Controllers
         private bool canSendOrders = true;
 
         public ServeController(
-            IOrderRepository orderRepo,
-            ITableRepository tableRepo,
-            IWaiterRepository waiterRepo,
-            IFoodRepository foodRepo,
             IHttpDataClient httpClient,
             IMapper mapper,
             IConfiguration configuration)
         {
-            _orderRepo = orderRepo;
-            _tableRepo = tableRepo;
-            _waiterRepo = waiterRepo;
-            _foodRepo = foodRepo;
             _httpClient = httpClient;
             _mapper = mapper;
             _configuration = configuration; ;
@@ -54,7 +42,7 @@ namespace DinningHall.Controllers
         [HttpPost]
         public ActionResult StartSimulation()
         {
-            var tables = _tableRepo.GetAllTables().Result;
+            var tables = StaticContext.Tables;
             var index = 0;
             foreach (var table in tables)
             {
@@ -76,19 +64,18 @@ namespace DinningHall.Controllers
             Console.WriteLine($"{_configuration["KitchenUrl"]}");
             while (canSendOrders)
             {
-                foreach(var waiter in await _waiterRepo.GetAllWaiters())
+                foreach(var waiter in StaticContext.Waiters)
                 {
                     if (waiter.IsFree)
                     {
-                        var table = (await _tableRepo.GetAllTables()).FirstOrDefault(t =>
+                        var table = StaticContext.Tables.FirstOrDefault(t =>
                             t.TableStatus == TableStatus.WaitToOrder &&
                             !t.IsFree);
                         if (table != null)
                         {
                             waiter.IsFree = false;
-                            await _waiterRepo.UpdateWaiter(waiter);
+                            
                             table.TableStatus = TableStatus.WaitToBeServed;
-                            await _tableRepo.UpdateTable(table);
                             var sentAt = DateTime.UtcNow;
                             nrSent++;
                             Console.WriteLine($"--> Reputation is {reputation}");
@@ -118,7 +105,6 @@ namespace DinningHall.Controllers
                                 }
 
                                 waiter.IsFree = true;
-                                await _waiterRepo.UpdateWaiter(waiter);
                                 GenerateOrder(table.Id);
                                 UpdateTable(table.Id);
                             }
@@ -134,7 +120,7 @@ namespace DinningHall.Controllers
         private void GenerateOrder(Guid tableId)
         {
             var nrOfFoods = new Random().Next(1, 10);
-            var foodsFromDb = _foodRepo.GetAllFoods().Result.ToList();
+            var foodsFromDb = StaticContext.Foods;
             var foods = new List<Food>();
             var highestPreparationTime = int.MinValue;
             while (nrOfFoods > 0)
@@ -148,23 +134,39 @@ namespace DinningHall.Controllers
                 nrOfFoods--;
             }
 
-            _orderRepo.CreateOrder(new CreateOrderDto
+            var order = new Order
             {
+                Id = Guid.NewGuid(),
                 Foods = foods,
                 MaxWaitTime = highestPreparationTime * 1.3,
                 Priority = (byte)new Random().Next(1, 5),
                 TableId = tableId,
                 CreatedAt = DateTime.UtcNow
-            });
+            };
+
+            StaticContext.Orders.Add(order);
+            foreach (var table in StaticContext.Tables)
+            {
+                if (table.Id == tableId)
+                {
+                    table.Order = order;
+                    break;
+                }
+            }
 
         }
 
         private void UpdateTable(Guid tableId)
         {
-            var tableFromRepo = _tableRepo.GetTableById(tableId).Result;
-            tableFromRepo.IsFree = false;
-            tableFromRepo.TableStatus = TableStatus.WaitToOrder;
-            _tableRepo.UpdateTable(tableFromRepo);
+            foreach (var table in StaticContext.Tables)
+            {
+                if (table.Id == tableId)
+                {
+                    table.IsFree = false;
+                    table.TableStatus = TableStatus.WaitToOrder;
+                    break;
+                }
+            }
         }
         #endregion
     }
