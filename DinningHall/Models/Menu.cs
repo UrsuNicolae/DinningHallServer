@@ -1,4 +1,5 @@
-﻿using DinningHall.Data;
+﻿/*
+using DinningHall.Data;
 using System.Collections.Generic;
 
 namespace DinningHall.Models
@@ -15,3 +16,4 @@ namespace DinningHall.Models
         public IEnumerable<Food> Foods => _context.Foods;
     }
 }
+*/

@@ -1,5 +1,4 @@
-﻿using DinningHall.Data.Interfaces;
-using DinningHall.DTOs;
+﻿using DinningHall.DTOs;
 using DinningHall.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;

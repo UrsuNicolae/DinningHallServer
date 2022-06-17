@@ -1,5 +1,4 @@
 using DinningHall.Data;
-using DinningHall.Data.Interfaces;
 using DinningHall.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,13 +24,6 @@ namespace DinningHall
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(opt =>
-                opt.UseInMemoryDatabase("DinningHallDb"));
-            services.AddScoped<IOrderRepository, OrderRepository>();
-            services.AddScoped<IWaiterRepository, WaiterRepository>();
-            services.AddScoped<ITableRepository, TableRepository>();
-            services.AddScoped<IFoodRepository, FoodRepository>();
-            services.AddSingleton<DbContextFactory>();
 
             services.AddHttpClient<IHttpDataClient, HttpDataClient>();
 
