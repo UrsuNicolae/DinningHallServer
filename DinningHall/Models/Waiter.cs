@@ -17,24 +17,23 @@ namespace DinningHall.Models
 
         public bool IsFree { get; set; }
 
-        public async Task<Guid> ServeTable(IHttpDataClient httpClient, IMapper mapper)
+        public Guid ServeTable(IHttpDataClient httpClient, IMapper mapper)
         {
             Guid tableId = Guid.Empty;
-            new Thread(async () =>
+            new Thread(() =>
             {
                 var table = StaticContext.Tables.FirstOrDefault(t =>
                           t.TableStatus == TableStatus.WaitToOrder &&
                           !t.IsFree);
                 if (table != null)
                 {
-                    IsFree = false;
 
                     table.TableStatus = TableStatus.WaitToBeServed;
                     var sentAt = DateTime.UtcNow;
                     StaticContext.NRSet++;
                     Console.WriteLine($"--> Reputation is {StaticContext.Reputation}");
-                    var response = await httpClient.SendOrder(mapper.Map<OrderDto>(table.Order));
-                    if (response.IsSuccessStatusCode)
+                    var response =  httpClient.SendOrder(mapper.Map<OrderDto>(table.Order));
+                    if (response.Result.IsSuccessStatusCode)
                     {
                         var receivedAfter = DateTime.UtcNow - sentAt;
                         if (receivedAfter.Seconds < StaticContext.MaxWait)
@@ -60,6 +59,7 @@ namespace DinningHall.Models
 
                         IsFree = true;
                         tableId = table.Id;
+                        Thread.Sleep(200);
                     }
                 }
             }).Start();

@@ -62,10 +62,11 @@ namespace DinningHall.Controllers
                 {
                     if (waiter.IsFree)
                     {
+                        waiter.IsFree = false;
                         var tableId = waiter.ServeTable(_httpClient, _mapper);
 
-                        GenerateOrder(tableId.Result);
-                        UpdateTable(tableId.Result);
+                        GenerateOrder(tableId);
+                        UpdateTable(tableId);
                     }
 
                 };
