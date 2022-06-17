@@ -16,5 +16,11 @@ namespace DinningHall.Data
         public static ThreadSafeListWithLock<Waiter> Waiters { get; set; } = new ThreadSafeListWithLock<Waiter>();
 
         public static ThreadSafeListWithLock<Food> Foods { get; set; } = new ThreadSafeListWithLock<Food>();
+
+        public static int NRSet { get; set; } = 0;
+
+        public static double Reputation { get; set; } = 0;
+
+        public static int MaxWait { get; set; } = 30;
     }
 }

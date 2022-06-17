@@ -45,6 +45,17 @@ namespace DinningHall.Models
             return (threadClonedList.Value);
         }
 
+        public T FirstOrDefault(Func<T, bool> func)
+        {
+            T result = default(T);
+            lock ((_lockList))
+            {
+                result = _internalList.FirstOrDefault(func);
+            }
+
+            return result;
+        }
+
         public void AddRange(List<T> items)
         {
             foreach (var item in items)

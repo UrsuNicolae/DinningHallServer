@@ -22,10 +22,6 @@ namespace DinningHall.Controllers
         private readonly IHttpDataClient _httpClient;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-        private static double reputation = 0;
-        private static int nrSent = 0;
-        private const int maxWait = 30;//seconds
-        private bool canSendOrders = true;
 
         public ServeController(
             IHttpDataClient httpClient,
@@ -59,55 +55,17 @@ namespace DinningHall.Controllers
         [HttpPost]
         public async Task StartSendingOrders()
         {
-            canSendOrders = true;
             Console.WriteLine($"{_configuration["KitchenUrl"]}");
-            while (canSendOrders)
+            while (true)
             {
                 foreach(var waiter in StaticContext.Waiters)
                 {
                     if (waiter.IsFree)
                     {
-                        var table = StaticContext.Tables.FirstOrDefault(t =>
-                            t.TableStatus == TableStatus.WaitToOrder &&
-                            !t.IsFree);
-                        if (table != null)
-                        {
-                            waiter.IsFree = false;
-                            
-                            table.TableStatus = TableStatus.WaitToBeServed;
-                            var sentAt = DateTime.UtcNow;
-                            nrSent++;
-                            Console.WriteLine($"--> Reputation is {reputation}");
-                            var response = await _httpClient.SendOrder(_mapper.Map<OrderDto>(table.Order));
-                            if (response.IsSuccessStatusCode)
-                            {
-                                var receivedAfter = DateTime.UtcNow - sentAt;
-                                if (receivedAfter.Seconds < maxWait)
-                                {
-                                    reputation = (reputation + 5) / nrSent;
-                                }
-                                else if (receivedAfter.Seconds < maxWait * 1.1)
-                                {
-                                    reputation = (reputation + 4) / nrSent;
-                                }
-                                else if (receivedAfter.Seconds < maxWait * 1.2)
-                                {
-                                    reputation = (reputation + 3) / nrSent;
-                                }
-                                else if (receivedAfter.Seconds < maxWait * 1.3)
-                                {
-                                    reputation = (reputation + 2) / nrSent;
-                                }
-                                else if (receivedAfter.Seconds < maxWait * 1.4)
-                                {
-                                    reputation = (reputation + 1) / nrSent;
-                                }
+                        var tableId = waiter.ServeTable(_httpClient, _mapper);
 
-                                waiter.IsFree = true;
-                                GenerateOrder(table.Id);
-                                UpdateTable(table.Id);
-                            }
-                        }
+                        GenerateOrder(tableId.Result);
+                        UpdateTable(tableId.Result);
                     }
 
                 };

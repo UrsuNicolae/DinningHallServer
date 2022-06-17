@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
+using DinningHall.Data;
+using DinningHall.DTOs;
+using DinningHall.Http;
 using DinningHall.Models.Enums;
 
 namespace DinningHall.Models
@@ -12,21 +17,53 @@ namespace DinningHall.Models
 
         public bool IsFree { get; set; }
 
-        /*public (Guid, Order) FindTableToServe(IEnumerable<Table> tables)
+        public async Task<Guid> ServeTable(IHttpDataClient httpClient, IMapper mapper)
         {
-            IsFree = false;
-            foreach (var table in tables)
+            Guid tableId = Guid.Empty;
+            new Thread(async () =>
             {
-                if (table.IsFree && table.TableStatus == TableStatus.WaitToOrder)
+                var table = StaticContext.Tables.FirstOrDefault(t =>
+                          t.TableStatus == TableStatus.WaitToOrder &&
+                          !t.IsFree);
+                if (table != null)
                 {
-                    table.TableStatus = TableStatus.WaitToBeServed;
-                    table.IsFree = false;
-                    return (table.Id, table.GenerateOrder());
-                }
-            }
+                    IsFree = false;
 
-            IsFree = true;
-            return (Guid.Empty, null);
-        }*/
+                    table.TableStatus = TableStatus.WaitToBeServed;
+                    var sentAt = DateTime.UtcNow;
+                    StaticContext.NRSet++;
+                    Console.WriteLine($"--> Reputation is {StaticContext.Reputation}");
+                    var response = await httpClient.SendOrder(mapper.Map<OrderDto>(table.Order));
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var receivedAfter = DateTime.UtcNow - sentAt;
+                        if (receivedAfter.Seconds < StaticContext.MaxWait)
+                        {
+                            StaticContext.Reputation = (StaticContext.Reputation + 5) / StaticContext.NRSet;
+                        }
+                        else if (receivedAfter.Seconds < StaticContext.MaxWait * 1.1)
+                        {
+                            StaticContext.Reputation = (StaticContext.Reputation + 4) / StaticContext.NRSet;
+                        }
+                        else if (receivedAfter.Seconds < StaticContext.MaxWait * 1.2)
+                        {
+                            StaticContext.Reputation = (StaticContext.Reputation + 3) / StaticContext.NRSet;
+                        }
+                        else if (receivedAfter.Seconds < StaticContext.MaxWait * 1.3)
+                        {
+                            StaticContext.Reputation = (StaticContext.Reputation + 2) / StaticContext.NRSet;
+                        }
+                        else if (receivedAfter.Seconds < StaticContext.MaxWait * 1.4)
+                        {
+                            StaticContext.Reputation = (StaticContext.Reputation + 1) / StaticContext.NRSet;
+                        }
+
+                        IsFree = true;
+                        tableId = table.Id;
+                    }
+                }
+            }).Start();
+            return tableId;
+        }
     }
 }
