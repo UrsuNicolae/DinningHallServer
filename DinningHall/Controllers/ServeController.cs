@@ -58,18 +58,20 @@ namespace DinningHall.Controllers
             Console.WriteLine($"{_configuration["KitchenUrl"]}");
             while (true)
             {
-                foreach(var waiter in StaticContext.Waiters)
+                Parallel.ForEach(StaticContext.Waiters, waiter =>
                 {
                     if (waiter.IsFree)
                     {
                         waiter.IsFree = false;
                         var tableId = waiter.ServeTable(_httpClient, _mapper);
 
-                        GenerateOrder(tableId);
-                        UpdateTable(tableId);
+                        new Thread(() => {
+                            GenerateOrder(tableId);
+                            UpdateTable(tableId);
+                        }).Start();
                     }
 
-                };
+                });
             }
         }
 
