@@ -10,6 +10,6 @@ namespace DinningHall.Http
 {
     public interface IHttpDataClient
     {
-        Task<HttpResponseMessage> SendOrder(OrderDto order);
+        Task<HttpResponseMessage> SendOrder(object order, Guid orderId);
     }
 }

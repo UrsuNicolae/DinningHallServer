@@ -63,12 +63,7 @@ namespace DinningHall.Controllers
                     if (waiter.IsFree)
                     {
                         waiter.IsFree = false;
-                        var tableId = waiter.ServeTable(_httpClient, _mapper);
-
-                        new Thread(() => {
-                            GenerateOrder(tableId);
-                            UpdateTable(tableId);
-                        }).Start();
+                        waiter.ServeTable(_httpClient, _mapper);
                     }
 
                 });
@@ -79,6 +74,36 @@ namespace DinningHall.Controllers
         public async Task Distribution(OrderDetails order)
         {
             Console.Write($"Order {order.Id} is ready to be served"); //test
+
+            var receivedAfter = DateTime.UtcNow - order.PickUpTime;
+            if (receivedAfter.Seconds < StaticContext.MaxWait)
+            {
+                StaticContext.Reputation = (StaticContext.Reputation + 5) / StaticContext.NRSet;
+            }
+            else if (receivedAfter.Seconds < StaticContext.MaxWait * 1.1)
+            {
+                StaticContext.Reputation = (StaticContext.Reputation + 4) / StaticContext.NRSet;
+            }
+            else if (receivedAfter.Seconds < StaticContext.MaxWait * 1.2)
+            {
+                StaticContext.Reputation = (StaticContext.Reputation + 3) / StaticContext.NRSet;
+            }
+            else if (receivedAfter.Seconds < StaticContext.MaxWait * 1.3)
+            {
+                StaticContext.Reputation = (StaticContext.Reputation + 2) / StaticContext.NRSet;
+            }
+            else if (receivedAfter.Seconds < StaticContext.MaxWait * 1.4)
+            {
+                StaticContext.Reputation = (StaticContext.Reputation + 1) / StaticContext.NRSet;
+            }
+            var waiter = StaticContext.Waiters.FirstOrDefault(w => w.Id == order.WaiterId);
+            waiter.IsFree = true;
+            new Thread(() =>
+            {
+                GenerateOrder(order.TableId);
+                UpdateTable(order.TableId);
+            }).Start();
+            Thread.Sleep(200);
         }
 
         #region helpers

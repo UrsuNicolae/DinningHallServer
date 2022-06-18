@@ -17,9 +17,8 @@ namespace DinningHall.Models
 
         public bool IsFree { get; set; }
 
-        public Guid ServeTable(IHttpDataClient httpClient, IMapper mapper)
+        public void ServeTable(IHttpDataClient httpClient, IMapper mapper)
         {
-            Guid tableId = Guid.Empty;
             new Thread(() =>
             {
                 var table = StaticContext.Tables.FirstOrDefault(t =>
@@ -33,38 +32,15 @@ namespace DinningHall.Models
                     StaticContext.NRSet++;
                     Console.WriteLine($"--> Reputation is {StaticContext.Reputation}");
                     table.Order.WaiterId = Id;
-                    var response =  httpClient.SendOrder(mapper.Map<OrderDto>(table.Order));
-                    if (response.Result.IsSuccessStatusCode)
-                    {
-                        var receivedAfter = DateTime.UtcNow - sentAt;
-                        if (receivedAfter.Seconds < StaticContext.MaxWait)
+                    httpClient.SendOrder(new 
                         {
-                            StaticContext.Reputation = (StaticContext.Reputation + 5) / StaticContext.NRSet;
-                        }
-                        else if (receivedAfter.Seconds < StaticContext.MaxWait * 1.1)
-                        {
-                            StaticContext.Reputation = (StaticContext.Reputation + 4) / StaticContext.NRSet;
-                        }
-                        else if (receivedAfter.Seconds < StaticContext.MaxWait * 1.2)
-                        {
-                            StaticContext.Reputation = (StaticContext.Reputation + 3) / StaticContext.NRSet;
-                        }
-                        else if (receivedAfter.Seconds < StaticContext.MaxWait * 1.3)
-                        {
-                            StaticContext.Reputation = (StaticContext.Reputation + 2) / StaticContext.NRSet;
-                        }
-                        else if (receivedAfter.Seconds < StaticContext.MaxWait * 1.4)
-                        {
-                            StaticContext.Reputation = (StaticContext.Reputation + 1) / StaticContext.NRSet;
-                        }
-
-                        IsFree = true;
-                        tableId = table.Id;
-                        Thread.Sleep(200);
-                    }
+                            order = table.Order,
+                            tableId = table.Id,
+                            watiterId = Id
+                        }, table.Order.Id);
+                    
                 }
             }).Start();
-            return tableId;
         }
     }
 }

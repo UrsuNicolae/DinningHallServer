@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using DinningHall.Models;
 
 namespace DinningHall.Http
 {
@@ -22,7 +23,7 @@ namespace DinningHall.Http
             _configuration = configuration;
         }
 
-        public async Task<HttpResponseMessage> SendOrder(OrderDto order)
+        public async Task<HttpResponseMessage> SendOrder(object order, Guid orderId)
         {
             var httpContent = new StringContent(
                 JsonConvert.SerializeObject(order, new JsonSerializerSettings()
@@ -31,7 +32,7 @@ namespace DinningHall.Http
                 }),
                 Encoding.UTF8,
                 "application/json");
-            Console.WriteLine($"--> Send order {order.Id} to kitchen");
+            Console.WriteLine($"--> Send order {orderId} to kitchen");
             var url = $"{_configuration["KitchenUrl"]}";
             return await _httpClient.PostAsync(url, httpContent);
         }
