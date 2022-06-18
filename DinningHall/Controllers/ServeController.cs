@@ -44,8 +44,7 @@ namespace DinningHall.Controllers
                 index++;
                 if (index % 2 == 0)
                 {
-                    GenerateOrder(table.Id);
-                    UpdateTable(table.Id);
+                    table.GenerateTableOrder();
                 }
             }
 
@@ -98,67 +97,9 @@ namespace DinningHall.Controllers
             }
             var waiter = StaticContext.Waiters.FirstOrDefault(w => w.Id == order.WaiterId);
             waiter.IsFree = true;
-            new Thread(() =>
-            {
-                GenerateOrder(order.TableId);
-                UpdateTable(order.TableId);
-            }).Start();
+            var table = StaticContext.Tables.FirstOrDefault(t => t.Id == order.TableId);
+            table.GenerateTableOrder();
             Thread.Sleep(200);
         }
-
-        #region helpers
-
-        private void GenerateOrder(Guid tableId)
-        {
-            var nrOfFoods = new Random().Next(1, 10);
-            var foodsFromDb = StaticContext.Foods;
-            var foods = new List<Food>();
-            var highestPreparationTime = int.MinValue;
-            while (nrOfFoods > 0)
-            {
-                var foodToAdd = foodsFromDb.ElementAt(new Random().Next(0, 9));
-                if (highestPreparationTime < foodToAdd.PreparationTime)
-                {
-                    highestPreparationTime = foodToAdd.PreparationTime;
-                }
-                foods.Add(foodToAdd);
-                nrOfFoods--;
-            }
-
-            var order = new Order
-            {
-                Id = Guid.NewGuid(),
-                Foods = foods,
-                MaxWaitTime = highestPreparationTime * 1.3,
-                Priority = (byte)new Random().Next(1, 5),
-                TableId = tableId,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            StaticContext.Orders.Add(order);
-            foreach (var table in StaticContext.Tables)
-            {
-                if (table.Id == tableId)
-                {
-                    table.Order = order;
-                    break;
-                }
-            }
-
-        }
-
-        private void UpdateTable(Guid tableId)
-        {
-            foreach (var table in StaticContext.Tables)
-            {
-                if (table.Id == tableId)
-                {
-                    table.IsFree = false;
-                    table.TableStatus = TableStatus.WaitToOrder;
-                    break;
-                }
-            }
-        }
-        #endregion
     }
 }
