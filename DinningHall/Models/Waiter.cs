@@ -32,6 +32,7 @@ namespace DinningHall.Models
                     var sentAt = DateTime.UtcNow;
                     StaticContext.NRSet++;
                     Console.WriteLine($"--> Reputation is {StaticContext.Reputation}");
+                    table.Order.WaiterId = Id;
                     var response =  httpClient.SendOrder(mapper.Map<OrderDto>(table.Order));
                     if (response.Result.IsSuccessStatusCode)
                     {

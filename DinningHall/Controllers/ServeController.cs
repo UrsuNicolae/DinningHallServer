@@ -75,6 +75,12 @@ namespace DinningHall.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task Distribution(OrderDetails order)
+        {
+            Console.Write($"Order {order.Id} is ready to be served"); //test
+        }
+
         #region helpers
 
         private void GenerateOrder(Guid tableId)
